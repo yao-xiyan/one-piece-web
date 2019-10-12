@@ -5,7 +5,17 @@ Vue.use(VueRouter)
 
 const router = new VueRouter({
   // 配置路由表
-  routes: []
+  routes: [
+    {
+      name: 'login',
+      path: '/login',
+      component: () => import('@/views/index')
+    },
+    {
+      path: '',
+      redirect: 'login'
+    }
+  ]
 })
 
 export default router
