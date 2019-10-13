@@ -32,7 +32,8 @@
 </template>
 
 <script>
-import request from '@/utils/request'
+// import request from '@/utils/request'
+import { login } from '@/api/user'
 export default {
   name: 'LoginIndex',
   data () {
@@ -46,17 +47,26 @@ export default {
   methods: {
     // 登录按钮事件
     async onLogin () {
+      const toast = this.$toast.loading({
+        duration: 0, // 持续展示 toast
+        forbidClick: true, // 禁用背景点击
+        loadingType: 'spinner',
+        message: '登录中···'
+      })
       try {
+        // 表单验证
+
+        // 验证通过，loding，请求
         // 请求提交表单数据
-        const { data } = await request({
-          method: 'POST',
-          url: '/app/v1_0/authorizations',
-          data: this.user
-        })
+        const { data } = await login(this.user)
         console.log(data)
+        // 结束loading
+        toast.clear()
         this.$toast.success('登陆成功')
       } catch (err) {
         if (err.response && err.response.status === 400) {
+          // 结束loading
+          toast.clear()
           this.$toast.fail('登录失败，手机号或验证码错误！')
         }
       }
