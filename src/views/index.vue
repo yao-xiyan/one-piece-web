@@ -6,19 +6,41 @@
 
     <!-- 导航栏 -->
     <!-- 登录表单 -->
-    <van-cell-group>
-      <van-field required
-                 v-model="user.mobile"
-                 clearable
-                 label="用户名"
-                 placeholder="请输入用户名" />
+    <ValidationObserver ref="loginForm">
+      <van-cell-group>
+        <!--
+          name 提示的文本
+          rules 验证规则
+          v-slot="{ errors }" 获取校验结果数据
+          参考文档：https://logaretm.github.io/vee-validate/api/rules.html#alpha
+          v-slot="{ errors }" 获取校验结果数据
+        errors[0] 读取校验结果的失败信息
+         -->
+        <!-- <ValidationProvider name="手机号" rules="required|email|max:5"  v-slot="{ errors }"> -->
+        <ValidationProvider name="手机号"
+                            rules="required|phone"
+                            v-slot="{ errors }">
+          <van-field required
+                     v-model="user.mobile"
+                     clearable
+                     label="用户名"
+                     :error-message="errors[0]"
+                     placeholder="请输入用户名" />
+        </ValidationProvider>
+        <ValidationProvider name="验证码"
+                            rules="required|max:6"
+                            v-slot="{ errors }">
+          <van-field type="password"
+                     v-model="user.code"
+                     label="验证码"
+                     clearable
+                     placeholder="请输入验证码"
+                     :error-message="errors[0]"
+                     required />
+        </ValidationProvider>
+      </van-cell-group>
+    </ValidationObserver>
 
-      <van-field type="password"
-                 v-model="user.code"
-                 label="密码"
-                 placeholder="请输入密码"
-                 required />
-    </van-cell-group>
     <!-- 登录表单 -->
     <!-- 登录按钮 -->
     <div class="btn-wrap">
@@ -47,7 +69,11 @@ export default {
   methods: {
     // 登录按钮事件
     async onLogin () {
-      const toast = this.$toast.loading({
+      const isValid = await this.$refs.loginForm.validate()
+      if (!isValid) {
+        return
+      }
+      this.$toast.loading({
         duration: 0, // 持续展示 toast
         forbidClick: true, // 禁用背景点击
         loadingType: 'spinner',
@@ -60,13 +86,13 @@ export default {
         // 请求提交表单数据
         const { data } = await login(this.user)
         console.log(data)
-        // 结束loading
-        toast.clear()
+        // 清除loading
+        // toast.clear()
         this.$toast.success('登陆成功')
       } catch (err) {
         if (err.response && err.response.status === 400) {
-          // 结束loading
-          toast.clear()
+          // 清除loading
+          // toast.clear()
           this.$toast.fail('登录失败，手机号或验证码错误！')
         }
       }
