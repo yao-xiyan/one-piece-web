@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import { Button, Cell, CellGroup, NavBar, Field, Toast } from 'vant'
+import { Button, Cell, CellGroup, NavBar, Field, Toast, Icon } from 'vant'
 import './styles/index.less'
 // 表单验证
 import { ValidationProvider, ValidationObserver, extend } from 'vee-validate' // 核心组件
@@ -38,6 +38,7 @@ Vue.use(Button)
   .use(NavBar)
   .use(Field)
   .use(Toast)
+  .use(Icon)
 Vue.config.productionTip = false
 
 new Vue({
