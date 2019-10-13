@@ -9,11 +9,22 @@ const router = new VueRouter({
     {
       name: 'login',
       path: '/login',
-      component: () => import('@/views/index')
+      component: () => import('@/views/login')
     },
     {
       path: '',
       redirect: 'login'
+    },
+    {
+      path: '/tabbar',
+      component: () => import('@/views/tabbar'),
+      children: [
+        {
+          name: 'home',
+          path: '', // 默认子路由
+          component: () => import('@/views/home')
+        }
+      ]
     }
   ]
 })
