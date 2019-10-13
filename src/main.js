@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import { Button, Cell, CellGroup, NavBar, Field, Toast, Icon, Tabbar, TabbarItem } from 'vant'
+import { Button, Cell, CellGroup, NavBar, Field, Toast, Icon, Tabbar, TabbarItem, Tab, Tabs, List } from 'vant'
 import './styles/index.less'
 // 表单验证
 import { ValidationProvider, ValidationObserver, extend } from 'vee-validate' // 核心组件
@@ -32,15 +32,18 @@ extend('phone', {
 })
 
 // 全局注册 vant 组件
-Vue.use(Button)
-  .use(Cell)
-  .use(CellGroup)
-  .use(NavBar)
-  .use(Field)
-  .use(Toast)
-  .use(Icon)
-  .use(Tabbar)
-  .use(TabbarItem)
+Vue.use(Button) // 按钮
+  .use(Cell) // 单元格
+  .use(CellGroup) // 单元格组件
+  .use(NavBar) // 导航栏
+  .use(Field) // 输入框
+  .use(Toast) // 轻提示
+  .use(Icon) // 字体图标
+  .use(Tabbar) // 底部标签栏
+  .use(TabbarItem) // 底部标签栏
+  .use(Tab) // 标签栏
+  .use(Tabs) // 标签栏
+  .use(List) // 列表
 Vue.config.productionTip = false
 
 new Vue({
