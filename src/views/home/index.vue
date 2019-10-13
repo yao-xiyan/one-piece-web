@@ -10,7 +10,9 @@
               line-height="6px"
               line-width="30px"
               v-model="active">
-      <van-tab title="推荐">
+      <van-tab :title="item.name"
+               v-for="item in channels"
+               :key="item.id">
         <!-- 文章列表 -->
         <van-list v-model="loading"
                   :finished="finished"
@@ -22,9 +24,6 @@
         </van-list>
         <!-- 文章列表 -->
       </van-tab>
-      <van-tab title="热门话题">热门话题</van-tab>
-      <van-tab title="科技动态">科技动态</van-tab>
-      <van-tab title="区块链">区块链</van-tab>
     </van-tabs>
     <!-- 频道列表 -->
 
@@ -32,14 +31,17 @@
 </template>
 
 <script>
+import { getDefaultChannels } from '@/api/channel'
+
 export default {
   name: 'HomeIndex',
   data () {
     return {
       active: 0, // 默认选中第几个
-      list: [],
+      list: [], // 数据列表
       loading: false,
-      finished: false
+      finished: false,
+      channels: [] // 频道列表
     }
   },
   methods: {
@@ -57,7 +59,17 @@ export default {
           this.finished = true
         }
       }, 500)
+    },
+
+    async loadChannels () {
+      const { data } = await getDefaultChannels()
+      console.log(data)
+      this.channels = data.data.channels
     }
+  },
+  created () {
+    // 获取频道列表
+    this.loadChannels()
   }
 }
 </script>

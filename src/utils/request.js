@@ -1,5 +1,7 @@
 import axios from 'axios'
 import jsonBig from 'json-bigint'
+
+// 这里获取到的 store 和组件中的 this.$store 是一个东西
 import store from '@/store'
 // axios.create 方法
 // 建议使用create方式，我们可以拥有
