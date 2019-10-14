@@ -2,7 +2,8 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import { Button, Cell, CellGroup, NavBar, Field, Toast, Icon, Tabbar, TabbarItem, Tab, Tabs, List } from 'vant'
+import './utils/datetime'
+import { Button, Cell, CellGroup, NavBar, Field, Toast, Icon, Tabbar, TabbarItem, Tab, Tabs, List, PullRefresh, Grid, GridItem, Image, lazyload } from 'vant'
 import './styles/index.less'
 // 表单验证
 import { ValidationProvider, ValidationObserver, extend } from 'vee-validate' // 核心组件
@@ -44,6 +45,11 @@ Vue.use(Button) // 按钮
   .use(Tab) // 标签栏
   .use(Tabs) // 标签栏
   .use(List) // 列表
+  .use(PullRefresh) // 下拉列表
+  .use(Grid) // 宫格
+  .use(GridItem) // 宫格
+  .use(Image) // 图片
+  .use(lazyload) // 图片懒加载
 Vue.config.productionTip = false
 
 new Vue({
