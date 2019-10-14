@@ -103,6 +103,7 @@ export default {
         setItem('user', data.data)
 
         this.$toast.success('登陆成功')
+        this.$router.push('tabbar') // 跳转到首页
       } catch (err) {
         if (err.response && err.response.status === 400) {
           // 清除loading
