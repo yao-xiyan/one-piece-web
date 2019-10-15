@@ -1,7 +1,8 @@
 <template>
   <div class="home">
     <!-- 导航栏 -->
-    <van-nav-bar title="首页" />
+    <van-nav-bar title="首页"
+                 fixed />
 
     <!-- 导航栏 -->
 
@@ -10,11 +11,13 @@
               line-height="6px"
               line-width="30px"
               v-model="active">
+
       <!-- 外层遍历频道 -->
       <van-tab :title="channel.name"
                v-for="channel in channels"
                :key="channel.id">
         <!-- 文章列表 -->
+
         <!-- 下拉刷新 -->
         <van-pull-refresh v-model="channel.isPullDownLoading"
                           @refresh="onRefresh">
@@ -63,6 +66,12 @@
       </van-tab>
     </van-tabs>
     <!-- 频道列表 -->
+    <!-- 编辑频道 -->
+    <van-popup v-model="isChannelEditShow"
+               position="bottom"
+               :style="{ height: '95%' }"
+               round />
+    <!-- /编辑频道 -->
 
   </div>
 </template>
@@ -79,7 +88,8 @@ export default {
       // list: [], // 数据列表
       // loading: false,
       // finished: false,
-      channels: [] // 频道列表
+      channels: [], // 频道列表
+      isChannelEditShow: true // 这里先设置为 true 就能看到弹窗的页面了
     }
   },
   methods: {
