@@ -10,7 +10,18 @@
     <van-tabs color="#3296fa"
               line-height="6px"
               line-width="30px"
+              animated
+              swipeable
               v-model="active">
+
+      <!-- 面包按钮 -->
+      <div slot="nav-right"
+           class="wap-nav"
+           @click="isChannelShow = true">
+        <van-icon name="wap-nav"
+                  size="24" />
+      </div>
+      <!-- /面包按钮 -->
 
       <!-- 外层遍历频道 -->
       <van-tab :title="channel.name"
@@ -60,25 +71,60 @@
                 </div>
               </div>
             </van-cell>
+            <!-- 内容列表 -->
           </van-list>
         </van-pull-refresh>
         <!-- 文章列表 -->
       </van-tab>
     </van-tabs>
     <!-- 频道列表 -->
-    <!-- 编辑频道 -->
-    <van-popup v-model="isChannelEditShow"
+
+    <!-- 频道管理 -->
+    <van-popup v-model="isChannelShow"
+               round
                position="bottom"
                :style="{ height: '95%' }"
-               round />
-    <!-- /编辑频道 -->
+               closeable
+               close-icon-position="top-left">
+      <div class="channel-container">
+        <van-cell title="我的频道"
+                  :border="false">
+          <van-button type="danger"
+                      size="mini"
+                      @click="isEditShow = !isEditShow">{{ isEditShow ? '完成' : '编辑' }}</van-button>
+        </van-cell>
+        <van-grid :gutter="10">
+          <van-grid-item v-for="(channel, index) in channels"
+                         :key="index"
+                         :text="channel.name"
+                         @click="onMyChannelClick(index)">
+            <van-icon v-show="isEditShow"
+                      class="close-icon"
+                      slot="icon"
+                      name="close" />
+          </van-grid-item>
+        </van-grid>
+
+        <van-cell title="推荐频道"
+                  :border="false" />
+        <van-grid :gutter="10">
+          <van-grid-item v-for="(channel, index) in recommondChannels"
+                         :key="index"
+                         :text="channel.name"
+                         @click="onAddChannel(channel)" />
+        </van-grid>
+      </div>
+    </van-popup>
+    <!-- /频道管理 -->
 
   </div>
 </template>
 
 <script>
-import { getDefaultChannels } from '@/api/channel'
+import { getDefaultChannels, getAllChannels } from '@/api/channel'
 import { getArticles } from '@/api/article'
+import { setItem, getItem } from '@/utils/storage'
+
 export default {
   name: 'HomeIndex',
   data () {
@@ -89,7 +135,41 @@ export default {
       // loading: false,
       // finished: false,
       channels: [], // 频道列表
-      isChannelEditShow: true // 这里先设置为 true 就能看到弹窗的页面了
+      isChannelShow: false, // 这里先设置为 true 就能看到弹窗的页面了
+      allChannels: [], // 所有频道列表
+      isEditShow: false // 频道的编辑状态
+    }
+  },
+  watch: {
+    // 函数名就是要监视数据成员名称
+    channels (newVal) {
+      setItem('channels', newVal)
+    }
+  },
+  // 计算属性获取剩余频道
+  computed: {
+    /**
+ * 获取推荐频道列表
+ */
+    recommondChannels () {
+      const arr = []
+      // 遍历所有频道
+      this.allChannels.forEach(channel => {
+        // 判断 channel 是否存在我的频道中
+        // 如果不存在，就证明它是剩余推荐的频道
+
+        // 数组的 find 方法
+        // 它会遍历数组，每遍历一次，它就判定 item.id === channel.id
+        // 如果 true，则停止遍历，返回满足该条件的元素
+        // 如果 false，则继续遍历
+        // 如果直到遍历结束都没有找到符合 item.id === channel.id 条件的元素，则返回 undefined
+        const ret = this.channels.find(item => item.id === channel.id)
+        if (!ret) {
+          arr.push(channel)
+        }
+      })
+      return arr
+      // return 所有频道 - 我的频道
     }
   },
   methods: {
@@ -156,12 +236,20 @@ export default {
     // },
 
     /**
-     * 加载频道
+     * 加载我的频道列表
      */
     async loadChannels () {
-      const { data } = await getDefaultChannels()
-      const channels = data.data.channels
-      console.log(data)
+      let channels = []
+
+      // 读取本地存储中的频道列表
+      const localChannels = getItem('channels')
+      if (localChannels) {
+        channels = localChannels
+      } else {
+        const { data } = await getDefaultChannels()
+        channels = data.data.channels
+      }
+
       channels.forEach(channel => {
         channel.articles = [] // 存储频道的文章列表
         channel.finished = false // 存储频道的加载结束状态
@@ -189,11 +277,45 @@ export default {
       activeChannel.isPullDownLoading = false
       // 提示
       this.$toast('刷新成功')
+    },
+    /**
+ * 获取所有频道列表
+ */
+    async loadAllChannels () {
+      const { data } = await getAllChannels()
+      this.allChannels = data.data.channels
+    },
+    /**
+ * 添加频道
+ */
+    onAddChannel (channel) {
+      // 将频道添加到我的频道中
+      this.channels.push(channel)
+    },
+    /**
+ * 我的频道项点击处理函数
+ */
+    onMyChannelClick (index) {
+      if (this.isEditShow) {
+        // 如果是编辑状态，删除频道
+        this.channels.splice(index, 1)
+      } else {
+        // 如果是非编辑状态，切换频道展示
+
+        // 切换当前激活的频道
+        this.active = index
+
+        // 关闭频道弹层
+        this.isChannelShow = false
+      }
     }
   },
   created () {
     // 获取频道列表
     this.loadChannels()
+
+    // 获取所有频道
+    this.loadAllChannels()
   }
 }
 </script>
@@ -209,8 +331,19 @@ export default {
     }
   }
 
+  /** 展示频道的菜单按钮 */
+  .wap-nav {
+    position: sticky;
+    right: 0;
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    opacity: 0.8;
+  }
+
+  /* 标签组件的根节点的类名 */
   .van-tabs {
-    .van-tabs__wrap {
+    /deep/ .van-tabs__wrap {
       position: fixed;
       top: 46px;
       z-index: 2;
@@ -218,9 +351,18 @@ export default {
       right: 15px;
     }
 
-    .van-tabs__content {
+    /deep/ .van-tabs__content {
       margin-top: 90px;
       margin-bottom: 50px;
+    }
+  }
+
+  .channel-container {
+    padding-top: 30px;
+    .close-icon {
+      position: absolute;
+      top: -5px;
+      right: -5px;
     }
   }
 }
