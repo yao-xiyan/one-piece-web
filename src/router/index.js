@@ -23,6 +23,11 @@ const router = new VueRouter({
           name: 'home',
           path: '', // 默认子路由
           component: () => import('@/views/home')
+        },
+        {
+          name: 'search',
+          path: '/search', // 默认子路由
+          component: () => import('@/views/search')
         }
       ]
     }

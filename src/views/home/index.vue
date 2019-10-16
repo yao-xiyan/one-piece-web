@@ -1,8 +1,14 @@
 <template>
   <div class="home">
     <!-- 导航栏 -->
-    <van-nav-bar title="首页"
-                 fixed />
+    <van-nav-bar fixed>
+      <van-button round
+                  class="search-btn"
+                  size='small'
+                  slot="title"
+                  @click="$router.push('/search')"
+                  type="info">搜索</van-button>
+    </van-nav-bar>
 
     <!-- 导航栏 -->
 
@@ -240,15 +246,17 @@ export default {
      */
     async loadChannels () {
       let channels = []
-
+      const { data } = await getDefaultChannels()
       // 读取本地存储中的频道列表
       const localChannels = getItem('channels')
-      if (localChannels) {
-        channels = localChannels
-      } else {
-        const { data } = await getDefaultChannels()
-        channels = data.data.channels
-      }
+      localChannels ? channels = localChannels : channels = data.data.channels
+
+      // if (localChannels) {
+      //   channels = localChannels
+      // } else {
+      //   const { data } = await getDefaultChannels()
+      //   channels = data.data.channels
+      // }
 
       channels.forEach(channel => {
         channel.articles = [] // 存储频道的文章列表
@@ -283,6 +291,8 @@ export default {
  */
     async loadAllChannels () {
       const { data } = await getAllChannels()
+
+      this.loadChannels()
       this.allChannels = data.data.channels
     },
     /**
@@ -322,6 +332,10 @@ export default {
 
 <style lang="less">
 .home {
+  .search-btn {
+    width: 100%;
+    background-color: #5babfb;
+  }
   .article-info {
     display: flex;
     align-items: center;
