@@ -36,8 +36,7 @@ export default {
   data () {
     return {
       searchText: '',
-      searchSuggestions: [], // 联想建议列表
-      htmlStr: '<h1>Hello World</h1>'
+      searchSuggestions: [] // 联想建议列表
     }
   },
   methods: {
