@@ -13,10 +13,12 @@
 
     <!-- 联想建议 -->
     <van-cell-group>
-      <van-cell :title="item"
-                v-for="(item,index) in searchSuggestions"
+      <van-cell v-for="(item,index) in searchSuggestions"
                 :key="index"
-                icon="search" />
+                icon="search">
+        <div v-html="item"
+             solt="title"></div>
+      </van-cell>
     </van-cell-group>
 
     <!-- /联想建议 -->
@@ -32,7 +34,8 @@ export default {
   data () {
     return {
       searchText: '',
-      searchSuggestions: [] // 联想建议列表
+      searchSuggestions: [], // 联想建议列表
+      htmlStr: '<h1>Hello World</h1>'
     }
   },
   methods: {
@@ -52,7 +55,15 @@ export default {
         q: this.searchText
       })
 
-      this.searchSuggestions = data.data.options
+      const searchSuggestions = data.data.options
+      // 根据一个字符串创建一个正则表达对象
+      // 动态创建正则表达式
+      const reg = new RegExp(searchText.toLowerCase(), 'g')
+
+      searchSuggestions.forEach((item, index) => {
+        searchSuggestions[index] = item.toLowerCase().replace(reg, `<span style="color: red">${searchText}</span>`)
+      })
+      this.searchSuggestions = searchSuggestions
     }
   }
 }
