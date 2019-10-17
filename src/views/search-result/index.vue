@@ -6,18 +6,23 @@
                  fixed
                  @click-left="$router.back()" />
     <!-- /导航栏 -->
+    <!-- 下拉刷新 -->
+    <van-pull-refresh v-model="ispullDown"
+                      @refresh="onRefresh">
+      <!-- 文章列表 -->
+      <van-list class="article-list"
+                v-model="loading"
+                :finished="finished"
+                finished-text="没有更多了"
+                @load="onLoad">
+        <van-cell v-for="(item, index) in list"
+                  :key="index"
+                  :title="item.title" />
+      </van-list>
+      <!-- /文章列表 -->
+    </van-pull-refresh>
+    <!-- 下拉刷新 -->
 
-    <!-- 文章列表 -->
-    <van-list class="article-list"
-              v-model="loading"
-              :finished="finished"
-              finished-text="没有更多了"
-              @load="onLoad">
-      <van-cell v-for="(item, index) in list"
-                :key="index"
-                :title="item.title" />
-    </van-list>
-    <!-- /文章列表 -->
   </div>
 </template>
 
@@ -28,6 +33,7 @@ export default {
   name: 'SearchResult',
   data () {
     return {
+      ispullDown: '', // 下拉刷新
       list: [], // 数据列表
       loading: false, // 上拉加载更多的 loading
       finished: false, // 是否加载结束
@@ -37,6 +43,27 @@ export default {
   },
 
   methods: {
+    /**
+ * 下拉刷新
+ */
+    async onRefresh () {
+      const activeChannel = this.channels[this.active]
+      // 1. 请求获取最新推荐的文章列表
+      const { data } = await getSearch({
+        channel_id: activeChannel.id,
+        timestamp: Date.now(),
+        with_top: 1
+      })
+      // 2. 将数据添加到文章列表顶部
+      activeChannel.articles.unshift(...data.data.results)
+      // 3. 关闭下拉刷新的loading 的状态
+      activeChannel.ispullDown = false
+      // 提示
+      this.$toast('刷新成功')
+    },
+    /**
+     * 加载
+     */
     async onLoad () {
       // 1. 请求获取数据
       const { data } = await getSearch({
@@ -60,7 +87,7 @@ export default {
       //   // 如果没有，则将 finished 设置为 true
       //   this.finished = true
       // }
-      data.data.page ? this.page++ : this.finished = true
+      data.data.results.length ? this.page++ : this.finished = true
     }
     // onLoad () {
     //   // 异步更新数据

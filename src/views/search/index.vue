@@ -25,22 +25,54 @@
 
     <!-- /联想建议 -->
 
+    <!-- 搜索历史记录 -->
+    <van-cell-group>
+      <van-cell title="历史记录">
+        <span>全部删除</span>&nbsp;&nbsp;
+        <span>完成</span>
+
+        <van-icon name="delete" />
+      </van-cell>
+      <van-cell v-for="item in searchHistories"
+                :key="item"
+                :title="item">
+
+        <van-icon name="close" />
+      </van-cell>
+    </van-cell-group>
+
+    <!-- /搜索历史记录 -->
+
   </div>
 </template>
 
 <script>
 import { getSearchSuggestions } from '@/api/search'
-
+import { getItem, setItem } from '@/utils/storage'
 export default {
   name: 'SearchIndex',
   data () {
     return {
       searchText: '',
-      searchSuggestions: [] // 联想建议列表
+      searchSuggestions: [], // 联想建议列表
+      searchHistories: getItem('search-histories') || [] // 搜索历史记录
     }
   },
   methods: {
     onSearch (str) {
+      // 存储搜索历史记录
+      // 如果搜索历史记录中已存在，则直接移除
+      const index = this.searchHistories.indexOf(str)
+      if (index !== -1) {
+        this.searchHistories.splice(index, 1)
+      }
+      // 把最新的记录存储到数组的顶部
+      this.searchHistories.unshift(str)
+
+      // 持久化存储
+      setItem('search-histories', this.searchHistories)
+
+      // 跳转到搜索结果页面
       this.$router.push(`/search/${str}`)
     },
 
