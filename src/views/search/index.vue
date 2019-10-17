@@ -18,6 +18,10 @@
                 :key="index"
                 @click="onSearch(item)"
                 icon="search">
+        <!--
+          这里不能使用过滤器
+          因为过滤器只能用于 {{}}、v-bind
+         -->
         <div v-html="highlight(item)"
              solt="title"></div>
       </van-cell>
@@ -28,16 +32,25 @@
     <!-- 搜索历史记录 -->
     <van-cell-group>
       <van-cell title="历史记录">
-        <span>全部删除</span>&nbsp;&nbsp;
-        <span>完成</span>
+        <template v-if="isDeleteShow">
+          <span @click="searchHistories = []">全部删除</span>&nbsp;&nbsp;
+          <span @click="isDeleteShow = false">完成</span>
+        </template>
 
-        <van-icon name="delete" />
+        <van-icon v-else
+                  name="delete"
+                  @click="isDeleteShow = true" />
+        <!-- <van-icon name="delete"
+                  v-show="isDeleteShow" /> -->
       </van-cell>
       <van-cell v-for="item in searchHistories"
                 :key="item"
-                :title="item">
+                :title="item"
+                @click="onSearch(item)">
 
-        <van-icon name="close" />
+        <van-icon name="close"
+                  v-show="isDeleteShow"
+                  @click.stop="searchHistories.splice(index, 1)" />
       </van-cell>
     </van-cell-group>
 
@@ -55,9 +68,17 @@ export default {
     return {
       searchText: '',
       searchSuggestions: [], // 联想建议列表
-      searchHistories: getItem('search-histories') || [] // 搜索历史记录
+      searchHistories: getItem('search-histories') || [], // 搜索历史记录
+      isDeleteShow: [] // 控制删除的显示状态
     }
   },
+
+  watch: {
+    searchHistories (newVal) {
+      setItem('search-histories', newVal)
+    }
+  },
+
   methods: {
     onSearch (str) {
       // 存储搜索历史记录
