@@ -15,6 +15,31 @@ export const login = (data) => {
   })
 }
 
-export function register () {
+/**
+ * 关注用户请求
+ */
 
+export function followUser (userId) {
+  return request({
+    // method 用来制定请求方法， 这是 axios 的固定 API，不能瞎写
+    method: 'POST',
+    // url 用来指定请求路径
+    url: `/app/v1_0/user/followings`,
+    // data 是 axios 请求要求的字段名，用来传递请求体数据的
+    data: {
+      // 用户参数 被关注的用户 Id
+      target: userId
+    }
+  })
+}
+
+/**
+ * 取消关注用户请求
+ */
+
+export function unFollowUser (userId) {
+  return request({
+    method: 'DELETE',
+    url: `/app/v1_0/user/followings/${userId}`
+  })
 }

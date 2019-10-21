@@ -31,7 +31,8 @@
         </div>
         <van-button round
                     size="small"
-                    type="info">+ 关注</van-button>
+                    @click="onFollow"
+                    type="info">{{ article.is_followed ? '取消关注' : '+ 关注'}}</van-button>
       </div>
       <!-- 文章内容 -->
       <div class="content"
@@ -69,6 +70,7 @@
 
 <script>
 import { getArticle } from '@/api/article' // 引入获取文章详情请求
+import { followUser, unFollowUser } from '@/api/user'
 
 export default {
   name: 'ArticleIndex',
@@ -106,6 +108,18 @@ export default {
 
       // 无论是加载成功还是失败， loading 都需要结束
       this.loading = false
+    },
+
+    // 关注
+    async onFollow () {
+      if (this.article.is_followed) {
+        // 如果已经关注，则取消关注
+        await unFollowUser(this.article.aut_id)
+      } else {
+        // 如果没有关注，则关注
+        await followUser(this.article.aut_id)
+      }
+      this.article.is_followed = !this.article.is_followed
     }
   }
 }
