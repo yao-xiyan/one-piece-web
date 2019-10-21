@@ -16,6 +16,11 @@ const router = new VueRouter({
       redirect: 'login'
     },
     {
+      name: 'user',
+      path: '/user', // 用户信息路由
+      component: () => import('@/views/user')
+    },
+    {
       path: '/tabbar',
       component: () => import('@/views/tabbar'),
       children: [

@@ -13,6 +13,7 @@
     <!-- /搜索框 -->
 
     <!-- 联想建议 -->
+    <!-- 如果 searchText 如果有内容为 true  显示联想建议 -->
     <van-cell-group v-if="searchText">
       <van-cell v-for="(item,index) in searchSuggestions"
                 :key="index"
@@ -31,26 +32,28 @@
 
     <!-- 搜索历史记录 -->
     <van-cell-group v-else>
+      <!-- 删除状态显示 -->
       <van-cell title="历史记录">
         <template v-if="isDeleteShow">
           <span @click="searchHistories = []">全部删除</span>&nbsp;&nbsp;
           <span @click="isDeleteShow = false">完成</span>
         </template>
-
+        <!-- 非删除状态显示 -->
         <van-icon v-else
                   name="delete"
                   @click="isDeleteShow = true" />
         <!-- <van-icon name="delete"
                   v-show="isDeleteShow" /> -->
       </van-cell>
-      <van-cell v-for="item in searchHistories"
+      <van-cell v-for="(item, index) in searchHistories"
                 :key="item"
                 :title="item"
                 @click="onSearch(item)">
-
+        <!-- @click.stop 组织冒泡 -->
         <van-icon name="close"
                   v-show="isDeleteShow"
                   @click.stop="searchHistories.splice(index, 1)" />
+
       </van-cell>
     </van-cell-group>
 
@@ -62,6 +65,8 @@
 <script>
 import { getSearchSuggestions } from '@/api/search'
 import { getItem, setItem } from '@/utils/storage'
+import { debounce } from 'lodash'
+
 export default {
   name: 'SearchIndex',
   data () {
@@ -69,7 +74,7 @@ export default {
       searchText: '',
       searchSuggestions: [], // 联想建议列表
       searchHistories: getItem('search-histories') || [], // 搜索历史记录
-      isDeleteShow: [] // 控制删除的显示状态
+      isDeleteShow: false // 控制删除的显示状态
     }
   },
 
@@ -90,14 +95,16 @@ export default {
       // 把最新的记录存储到数组的顶部
       this.searchHistories.unshift(str)
 
-      // 持久化存储
+      // 必须在这里手动调用持久化存储，因为没来得及执行 watch ，当前页面就跳转了
       setItem('search-histories', this.searchHistories)
 
       // 跳转到搜索结果页面
       this.$router.push(`/search/${str}`)
     },
 
-    async onSearchInput () {
+    // async onSearchInput () {
+    // 函数防抖优化
+    onSearchInput: debounce(async function () {
       // 字符串清除空格
       const searchText = this.searchText.trim()
       // 做优化 如果为空字符串直接返回
@@ -118,11 +125,11 @@ export default {
       //   searchSuggestions[index] = item.toLowerCase().replace(reg, `<span style="color: red">${searchText}</span>`)
       // })
       this.searchSuggestions = searchSuggestions
-    },
+    }, 300),
     highlight (str) {
-      const reg = new RegExp(this.searchText.toLowerCase(), 'g')
+      const reg = new RegExp(this.searchText, 'g')
 
-      return str.toLowerCase().replace(reg, `<span style="color: red">${this.searchText}</span>`)
+      return str.replace(reg, `<span style="color: red">${this.searchText}</span>`)
     }
   }
 }
