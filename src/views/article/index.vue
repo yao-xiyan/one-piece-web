@@ -8,11 +8,13 @@
     <!-- /导航栏 -->
 
     <!-- 加载中 loading -->
-    <van-loading class="article-loading" />
+    <van-loading class="article-loading"
+                 v-if="loading" />
     <!-- /加载中 loading -->
 
     <!-- 文章详情 -->
-    <div class="detail">
+    <div class="detail"
+         v-else-if="article.title">
       <!-- 文章标题 -->
       <h3 class="title">{{ article.title }}</h3>
       <div class="author">
@@ -53,7 +55,11 @@
     <!-- /文章详情 -->
 
     <!-- 加载失败的消息提示 -->
-    <div class="error">
+    <div class="error"
+         v-else>
+      <!-- prevent 防止 a 链接的默认行为
+            stop 阻止冒泡
+      -->
       <p>网络超时，点击 <a href="#"
            @click.prevent="loadArticle">刷新</a> 试一试。</p>
     </div>
@@ -85,11 +91,21 @@ export default {
 
   methods: {
     async loadArticle () {
-      const { data } = await getArticle(this.$route.params.articleId)
+      // 开启 loading
+      this.loading = true
+      try {
+        const { data } = await getArticle(this.$route.params.articleId)
 
-      console.log(data)
+        console.log(data)
 
-      this.article = data.data
+        this.article = data.data
+      } catch (err) {
+        // 如果请求出错就意味着获取请求数据失败了，我们这里可以提示用户加载失败
+        console.log(err)
+      }
+
+      // 无论是加载成功还是失败， loading 都需要结束
+      this.loading = false
     }
   }
 }
