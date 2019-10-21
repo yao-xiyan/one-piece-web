@@ -33,7 +33,7 @@ export default {
   name: 'SearchResult',
   data () {
     return {
-      ispullDown: '', // 下拉刷新
+      ispullDown: false, // 下拉刷新
       list: [], // 数据列表
       loading: false, // 上拉加载更多的 loading
       finished: false, // 是否加载结束
