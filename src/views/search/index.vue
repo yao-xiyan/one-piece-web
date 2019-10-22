@@ -86,6 +86,10 @@ export default {
 
   methods: {
     onSearch (str) {
+      if (!str.trim().length || this.isDeleteShow) {
+        this.$toast.fail('搜索内容不能为空')
+        return
+      }
       // 存储搜索历史记录
       // 如果搜索历史记录中已存在，则直接移除
       const index = this.searchHistories.indexOf(str)

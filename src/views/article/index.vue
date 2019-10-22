@@ -43,7 +43,9 @@
                     hairline
                     type="primary"
                     plain
-                    icon="good-job-o">点赞</van-button>
+                    :icon="article.attitude === 1 ? 'good-job' : 'good-job-o'"
+                    @click="
+                    onLike()">{{ article.attitude === 1 ? '取消点赞' : '+ 点赞' }}</van-button>
         &nbsp;&nbsp;&nbsp;&nbsp;
         <van-button round
                     size="small"
@@ -69,7 +71,7 @@
 </template>
 
 <script>
-import { getArticle } from '@/api/article' // 引入获取文章详情请求
+import { getArticle, addLike, unLike } from '@/api/article' // 引入获取文章详情请求
 import { followUser, unFollowUser } from '@/api/user'
 
 export default {
@@ -112,14 +114,29 @@ export default {
 
     // 关注
     async onFollow () {
-      if (this.article.is_followed) {
-        // 如果已经关注，则取消关注
-        await unFollowUser(this.article.aut_id)
-      } else {
-        // 如果没有关注，则关注
-        await followUser(this.article.aut_id)
-      }
+      // if (this.article.is_followed) {
+      //   // 如果已经关注，则取消关注
+      //   await unFollowUser(this.article.aut_id)
+      // } else {
+      //   // 如果没有关注，则关注
+      //   await followUser(this.article.aut_id)
+      // }
+      this.article.is_followed ? await unFollowUser(this.article.aut_id) : await followUser(this.article.aut_id)
       this.article.is_followed = !this.article.is_followed
+    },
+
+    // 点赞
+    async onLike () {
+      const articleId = this.article.art_id.toString()
+      if (this.article.attitude === 1) {
+        // 如果已赞，则取消点赞
+        await unLike(articleId)
+        this.article.attitude = -1
+      } else {
+        // 否则点赞
+        await addLike(articleId)
+        this.article.attitude = 1
+      }
     }
   }
 }

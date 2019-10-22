@@ -26,3 +26,25 @@ export function getArticle (articleId) {
 
   })
 }
+
+/**
+ * 对文章点赞
+ */
+export function addLike (articleId) {
+  return request({
+    method: 'POST',
+    url: '/app/v1_0/article/likings',
+    data: {
+      target: articleId
+    }
+  })
+}
+/**
+ * 取消对文章点赞
+ */
+export function unLike (articleId) {
+  return request({
+    method: 'DELETE',
+    url: `/app/v1_0/article/likings/${articleId}`
+  })
+}
