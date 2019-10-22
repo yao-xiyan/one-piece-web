@@ -30,7 +30,7 @@ export function getArticle (articleId) {
 /**
  * 对文章点赞
  */
-export function addLike (articleId) {
+export const addLike = articleId => {
   return request({
     method: 'POST',
     url: '/app/v1_0/article/likings',
@@ -42,9 +42,31 @@ export function addLike (articleId) {
 /**
  * 取消对文章点赞
  */
-export function unLike (articleId) {
+export const unLike = (articleId) => {
   return request({
     method: 'DELETE',
     url: `/app/v1_0/article/likings/${articleId}`
+  })
+}
+
+/**
+ * 对文章不喜欢
+ */
+export const addDislike = articleId => {
+  return request({
+    method: 'POST',
+    url: '/app/v1_0/article/dislikes',
+    data: {
+      target: articleId
+    }
+  })
+}
+/**
+ * 取消对文章不喜欢
+ */
+export const unDislike = articleId => {
+  return request({
+    method: 'DELETE',
+    url: `/app/v1_0/article/dislikes/${articleId}`
   })
 }

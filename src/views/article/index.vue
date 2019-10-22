@@ -41,18 +41,19 @@
         <van-button round
                     size="small"
                     hairline
-                    type="primary"
+                    :type="article.attitude === 1 ? 'default' : 'primary'"
                     plain
                     :icon="article.attitude === 1 ? 'good-job' : 'good-job-o'"
                     @click="
-                    onLike()">{{ article.attitude === 1 ? '取消点赞' : '+ 点赞' }}</van-button>
+                    onLike">{{ article.attitude === 1 ? '取消点赞' : '+  点 赞' }}</van-button>
         &nbsp;&nbsp;&nbsp;&nbsp;
         <van-button round
                     size="small"
                     hairline
                     type="danger"
                     plain
-                    icon="delete">不喜欢</van-button>
+                    @click="onDislike"
+                    icon="delete">{{ article.attitude === 0 ? '取消不喜欢' : '不喜欢' }}</van-button>
       </div>
     </div>
     <!-- /文章详情 -->
@@ -71,7 +72,7 @@
 </template>
 
 <script>
-import { getArticle, addLike, unLike } from '@/api/article' // 引入获取文章详情请求
+import { getArticle, addLike, unLike, addDislike, unDislike } from '@/api/article' // 引入获取文章详情请求
 import { followUser, unFollowUser } from '@/api/user'
 
 export default {
@@ -94,6 +95,7 @@ export default {
   },
 
   methods: {
+    // 获取文章详情‘
     async loadArticle () {
       // 开启 loading
       this.loading = true
@@ -136,6 +138,22 @@ export default {
         // 否则点赞
         await addLike(articleId)
         this.article.attitude = 1
+      }
+    },
+
+    // 不喜欢
+    // attitude 为 -1 无状态
+    // 0 不喜欢  1 为点赞
+    async onDislike () {
+      const articleId = this.article.art_id.toString()
+      // 如果是不喜欢状态，则取消不喜欢
+      if (this.article.attitude === 0) {
+        await unDislike(articleId)
+        this.article.attitude = -1
+      } else {
+        // 否则，不喜欢
+        await addDislike(articleId)
+        this.article.attitude = 0
       }
     }
   }
