@@ -68,15 +68,23 @@
            @click.prevent="loadArticle">刷新</a> 试一试。</p>
     </div>
     <!-- /加载失败的消息提示 -->
+
+    <!-- 文章评论 -->
+    <article-comment />
+    <!-- /文章评论 -->
   </div>
 </template>
 
 <script>
 import { getArticle, addLike, unLike, addDislike, unDislike } from '@/api/article' // 引入获取文章详情请求
 import { followUser, unFollowUser } from '@/api/user'
+import ArticleComment from './components/article-comment'
 
 export default {
   name: 'ArticleIndex',
+  components: {
+    ArticleComment
+  },
   data () {
     return {
       loading: true, // 控制加载中的 loading 状态
