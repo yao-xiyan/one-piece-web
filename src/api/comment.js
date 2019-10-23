@@ -15,3 +15,15 @@ export const getComments = params => {
     params
   })
 }
+
+/**
+ *
+ * 添加评论或评论回复
+ */
+export const addComments = data => {
+  return request({
+    method: 'POST',
+    url: '/app/v1_0/comments',
+    data
+  })
+}
