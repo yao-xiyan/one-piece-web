@@ -53,7 +53,8 @@
                :style="{ height: '90%' }">
       <!-- 弹层组件 -->
       <comment-reply :comment="currentComment"
-                     v-if="isReplyShow" />
+                     v-if="isReplyShow"
+                     @close="isReplyShow = false" />
     </van-popup>
     <!-- /评论回复 -->
 
