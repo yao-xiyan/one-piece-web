@@ -21,8 +21,8 @@
         <p style="color: #363636;">{{ comment.content }}</p>
         <p>
           <span style="margin-right: 10px;">{{ comment.pudate | relativeTime }}</span>
-          <van-button size="mini"
-                      type="default">回复 {{ comment.reply_count }}</van-button>
+          <!-- <van-button size="mini"
+                      type="default">回复 {{ comment.reply_count }}</van-button> -->
         </p>
       </div>
       <van-icon slot="right-icon" />
@@ -38,23 +38,23 @@
               @load="onLoad">
       <van-cell v-for="(item, index) in list"
                 :key="index"
-                :title="comment.aut_name">
+                :title="item.aut_name">
         <van-image slot="icon"
                    round
                    width="30"
                    height="30"
                    style="margin-right: 10px;"
-                   :src="comment.aut_photo" />
+                   :src="item.aut_photo" />
         <span style="color: #466b9d;"
-              slot="title">{{ comment.aut_name }}</span>
+              slot="title">{{ item.aut_name }}</span>
         <div slot="label">
-          <p style="color: #363636;">{{ comment.content }}</p>
+          <p style="color: #363636;">{{ item.content }}</p>
           <p>
-            <span style="margin-right: 10px;">{{ comment.pubdate | relativeTime }}</span>
+            <span style="margin-right: 10px;">{{ item.pubdate | relativeTime }}</span>
           </p>
         </div>
         <van-icon slot="right-icon"
-                  :name="comment.is_liking ? 'like' : 'like-o'"
+                  :name="item.is_liking ? 'like' : 'like-o'"
                   @click="onCommentLike(item)" />
       </van-cell>
     </van-list>
@@ -144,15 +144,18 @@ export default {
 
       // 请求提交
       const { data } = await addComments({
-        target: this.$route.params.articleId, // 必须评论的目标id（评论文章即为文章id，对评论进行回复则为评论id）
-        content: commentText // 必须评论内容
-        // art_idinteger非必文章id，对评论内容发表回复时，需要传递此参数，表明所属文章id。对文章进行评论，不要传此参数。
+        target: this.comment.com_id.toString(), // 必须评论的目标id（评论文章即为文章id，对评论进行回复则为评论id）
+        content: commentText, // 必须评论内容
+        art_id: this.$route.params.articleId // 文章id，对评论内容发表回复时，需要传递此参数，表明所属文章id。对文章进行评论，不要传此参数。
       })
       // 将最新添加的评论数据放到顶部展示
       this.list.unshift(data.data.new_obj)
 
       // 清空文本框
       this.commentText = ''
+
+      // 更新当前评论的回复数量
+      this.comment.reply_count++
     },
 
     /**
@@ -169,14 +172,6 @@ export default {
 
       // 更新视图
       comment.is_liking = !comment.is_liking
-    },
-
-    /**
-        * 评论点赞/取消点赞
-        */
-    onReplyShow (comment) {
-      this.currentComment = comment
-      this.isReplyShow = true
     }
   }
 }
