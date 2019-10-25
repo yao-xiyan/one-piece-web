@@ -64,7 +64,10 @@ export default {
      * 图片改变
      */
     onFileChange () {
-      this.user.photo = window.URL.createObjectURL(this.$refs.file.files[0])
+      if (this.$refs.file.files[0]) {
+        // this.$refs.file.files DOM 中的 files 对象
+        this.user.photo = window.URL.createObjectURL(this.$refs.file.files[0])
+      }
     }
   }
 }
