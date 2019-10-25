@@ -54,3 +54,14 @@ export const getSelf = (userId) => {
     url: `/app/v1_0/user`
   })
 }
+
+/**
+ * 获取用户个人资料
+ */
+
+export const getProfile = (userId) => {
+  return request({
+    method: 'GET',
+    url: '/app/v1_0/user/profile'
+  })
+}
