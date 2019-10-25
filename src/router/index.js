@@ -21,6 +21,21 @@ const router = new VueRouter({
       component: () => import('@/views/user')
     },
     {
+      name: 'search',
+      path: '/search', // 搜索路由
+      component: () => import('@/views/search')
+    },
+    {
+      name: 'search-result',
+      path: '/search/:q', // 搜索结果路由
+      component: () => import('@/views/search-result')
+    },
+    {
+      name: 'article',
+      path: '/article/:articleId', // 文章详情路由
+      component: () => import('@/views/article')
+    },
+    {
       path: '/tabbar',
       component: () => import('@/views/tabbar'),
       children: [
@@ -30,19 +45,9 @@ const router = new VueRouter({
           component: () => import('@/views/home')
         },
         {
-          name: 'search',
-          path: '/search', // 搜索路由
-          component: () => import('@/views/search')
-        },
-        {
-          name: 'search-result',
-          path: '/search/:q', // 搜索结果路由
-          component: () => import('@/views/search-result')
-        },
-        {
-          name: 'article',
-          path: '/article/:articleId', // 文章详情路由
-          component: () => import('@/views/article')
+          name: 'my',
+          path: '/my', // 我的
+          component: () => import('@/views/my')
         }
       ]
     }

@@ -19,7 +19,7 @@ export const login = (data) => {
  * 关注用户请求
  */
 
-export function followUser (userId) {
+export const followUser = userId => {
   return request({
     // method 用来制定请求方法， 这是 axios 的固定 API，不能瞎写
     method: 'POST',
@@ -37,9 +37,20 @@ export function followUser (userId) {
  * 取消关注用户请求
  */
 
-export function unFollowUser (userId) {
+export const unFollowUser = (userId) => {
   return request({
     method: 'DELETE',
     url: `/app/v1_0/user/followings/${userId}`
+  })
+}
+
+/**
+ * 获取用户自己信息
+ */
+
+export const getSelf = (userId) => {
+  return request({
+    method: 'GET',
+    url: `/app/v1_0/user`
   })
 }
