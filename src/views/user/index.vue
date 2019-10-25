@@ -6,7 +6,8 @@
                  right-text="保存" />
     <van-cell-group>
       <van-cell title="头像"
-                is-link>
+                is-link
+                @click="onChangePhoto">
         <van-image round
                    width="30"
                    height="30"
@@ -22,6 +23,14 @@
                 :value="user.birthday"
                 is-link />
     </van-cell-group>
+    <!--
+      表单元素的 hidden 表示隐藏这个表单元素
+      ref 进行 DOM 操作
+     -->
+    <input type="file"
+           hidden
+           ref="file"
+           @change="onFileChange">
   </div>
 </template>
 
@@ -45,6 +54,17 @@ export default {
       const { data } = await getProfile()
       console.log(data)
       this.user = data.data
+    },
+
+    onChangePhoto () {
+      this.$refs.file.click()
+    },
+
+    /**
+     * 图片改变
+     */
+    onFileChange () {
+      this.user.photo = window.URL.createObjectURL(this.$refs.file.files[0])
     }
   }
 }
