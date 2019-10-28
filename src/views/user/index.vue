@@ -17,12 +17,15 @@
       </van-cell>
       <van-cell title="昵称"
                 :value="user.name"
-                is-link />
+                is-link
+                @click="isEditNameShow = true" />
       <van-cell title="性别"
-                :value="user.gender"
+                :value="user.gender === 0 ? '男' : '女'"
+                @click="isEditGenderShow = true"
                 is-link />
       <van-cell title="生日"
                 :value="user.birthday"
+                @click="isEditBirthdayShow = true"
                 is-link />
     </van-cell-group>
     <!--
@@ -33,17 +36,57 @@
            hidden
            ref="file"
            @change="onFileChange">
+
+    <!-- 编辑用户昵称弹窗 -->
+    <van-dialog v-model="isEditNameShow"
+                title="用户昵称"
+                show-cancel-button
+                @confirm="onUserNameConfirm">
+      <van-field :value="user.name"
+                 placeholder="请输入用户名"
+                 @input="onUserNameInput" />
+    </van-dialog>
+    <!-- /编辑用户昵称弹窗 -->
+
+    <!-- 编辑用户性别下拉拉菜单 -->
+
+    <van-action-sheet v-model="isEditGenderShow"
+                      :actions="actions"
+                      @select="onSelect" />
+    <!-- /编辑用户性别下拉拉菜单 -->
+
+    <!-- 编辑用户生日 -->
+    <van-popup v-model="isEditBirthdayShow"
+               position="bottom"
+               :style="{ height: '30%' }">
+
+      <van-datetime-picker type="date"
+                           @confirm="onUserBirthdayConfirm"
+                           @cancel="isEditBirthdayShow = false" />
+    </van-popup>
+    <!-- /编辑用户生日 -->
   </div>
 </template>
 
 <script>
 import { getProfile, updateUserPhoto } from '@/api/user'
+import dayjs from 'dayjs'
 
 export default {
   name: 'UserIndex',
   data () {
     return {
-      user: {}
+      user: {},
+      isEditNameShow: false, // 控制用户昵称显示隐藏
+      inputUserName: '', // 存储编辑用户名的输入框数据
+      isEditGenderShow: false, // 控制性别的上拉菜单的显示状态
+      isEditBirthdayShow: false, // 控制用户生日弹出层的显示状态
+      actions: [ // 上拉菜单的数据
+        // name 会当做文本输出渲染
+        // value 是自己自定义添加的
+        { name: '男', value: 0 },
+        { name: '女', value: 1 }
+      ]
     }
   },
 
@@ -103,6 +146,42 @@ export default {
         console.log(err)
         this.$toast.success('保存失败')
       }
+    },
+
+    /**
+     * 用户昵称
+     */
+    onUserNameConfirm () {
+      this.user.name = this.inputUserName
+    },
+
+    /**
+     * 用户名
+     */
+    onUserNameInput (value) {
+      this.inputUserName = value
+    },
+
+    /**
+    * 性别的下拉菜单
+    */
+    onSelect (item) {
+      // 修改数据
+      this.user.gender = item.value
+
+      // 关闭上拉菜单
+      this.isEditGenderShow = false
+    },
+
+    /**
+    * 性别的下拉菜单
+    */
+    onUserBirthdayConfirm (value) {
+      // 修改数据
+      this.user.birthday = dayjs(value).formmat('YYYY-MM-DD')
+
+      // 关闭上拉菜单
+      this.isEditGenderShow = false
     }
   }
 }

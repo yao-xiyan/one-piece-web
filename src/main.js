@@ -3,7 +3,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import './utils/datetime'
-import { Button, Cell, CellGroup, NavBar, Field, Toast, Icon, Tabbar, TabbarItem, Tab, Tabs, List, PullRefresh, Grid, GridItem, Image, lazyload, Popup, Search, Loading } from 'vant'
+import { Button, Cell, CellGroup, NavBar, Field, Toast, Icon, Tabbar, TabbarItem, Tab, Tabs, List, PullRefresh, Grid, GridItem, Image, lazyload, Popup, Search, Loading, Dialog, ActionSheet, DatetimePicker } from 'vant'
 import './styles/index.less'
 // 表单验证
 import { ValidationProvider, ValidationObserver, extend } from 'vee-validate' // 核心组件
@@ -53,6 +53,9 @@ Vue.use(Button) // 按钮
   .use(Popup) // 弹出层
   .use(Search) // 搜索框
   .use(Loading) // 加载loading
+  .use(Dialog) // 弹出框
+  .use(ActionSheet) // 上拉菜单
+  .use(DatetimePicker) // 时间选择
 Vue.config.productionTip = false
 
 new Vue({
