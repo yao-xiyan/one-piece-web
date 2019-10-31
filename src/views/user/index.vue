@@ -69,7 +69,10 @@
 </template>
 
 <script>
-import { getProfile, updateUserPhoto } from '@/api/user'
+import {
+  getProfile,
+  updateUserPhoto,
+  updateUserProfile } from '@/api/user'
 import dayjs from 'dayjs'
 
 export default {
@@ -136,15 +139,26 @@ export default {
       })
 
       try {
-        const formData = new FormData()
-        //  formData.append('名字', 数据)
-        formData.append('photo', this.$refs.file.files[0])
-        await updateUserPhoto(formData)
+        const fileObj = this.$refs.file.files[0]
+        // 如果用户选择了新的头像，那就更新用户头像
+        if (fileObj) {
+          const formData = new FormData()
+          //  formData.append('名字', 数据)
+          formData.append('photo', this.$refs.file.files[0])
+          await updateUserPhoto(formData)
+        }
+
+        // 更新用户其他文本信息
+        await updateUserProfile({
+          name: this.user.name, // 姓名
+          gender: this.user.gender, // 性别
+          birthday: this.user.birthday // 生日
+        })
         // 添加提示
         this.$toast.success('保存成功')
       } catch (err) {
         console.log(err)
-        this.$toast.success('保存失败')
+        this.$toast.fail('保存失败')
       }
     },
 
@@ -178,7 +192,7 @@ export default {
     */
     onUserBirthdayConfirm (value) {
       // 修改数据
-      this.user.birthday = dayjs(value).formmat('YYYY-MM-DD')
+      this.user.birthday = dayjs(value).format('YYYY-MM-DD')
 
       // 关闭上拉菜单
       this.isEditGenderShow = false

@@ -77,3 +77,15 @@ export const updateUserPhoto = (data) => {
     data
   })
 }
+
+/**
+ * 编辑用户个人资料（包含实名认证）
+ */
+
+export const updateUserProfile = (data) => {
+  return request({
+    method: 'PATCH',
+    url: '/app/v1_0/user/profile',
+    data
+  })
+}
