@@ -1,7 +1,7 @@
 <template>
   <div class="chat-container">
     <!-- 导航栏 -->
-    <van-nav-bar title="小智同学"
+    <van-nav-bar title="路飞同学"
                  left-arrow
                  @click-left="$router.back()"
                  fixed />
@@ -32,7 +32,8 @@
       <van-field v-model="message"
                  center
                  clearable>
-        <van-button slot="button"
+        <van-button @click="onSendMessage"
+                    slot="button"
                     size="small"
                     type="primary">发送</van-button>
       </van-field>
@@ -42,15 +43,48 @@
 </template>
 
 <script>
+import io from 'socket.io-client'
+
 export default {
   data () {
     return {
-      message: ''
+      message: '',
+      socket: null
     }
   },
 
-  mounted () {
-    window.list = this.$refs['message-list']
+  created () {
+    // 建立连接
+    const socket = io('http://ttapi.research.itcast.cn')
+
+    // 吧 socket 存储到 data 中。然后就可以在 methods 中访问到
+    this.socket = socket
+
+    // 当客户端与服务器建立连接成功，触发 connect 事件
+    socket.on('connect', () => {
+      console.log('建立连接成功！')
+    })
+
+    // 监听接收服务端消息
+    socket.on('message', data => {
+      console.log('收到服务器消息', data)
+    })
+  },
+
+  methods: {
+    onSendMessage () {
+      const message = this.message.trim()
+      if (!message) {
+        return
+      }
+
+      // socket.send()
+      // 发送消息
+      this.socket.emit('message', {
+        msg: message,
+        timestamp: Date.now()
+      })
+    }
   }
 }
 </script>
