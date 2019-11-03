@@ -44,6 +44,7 @@
 
 <script>
 import io from 'socket.io-client'
+import { getItem, setItem } from '@/utils/storage'
 
 export default {
   name: 'chatIndex',
@@ -52,7 +53,14 @@ export default {
       message: '',
       socket: null,
       // [{ message: '消息数据', isMe: true, photo: '头像' }]
-      messages: []
+      messages: getItem('chat-messages') || []
+    }
+  },
+
+  // 监视数据
+  watch: {
+    messages () {
+      setItem('chat-messages', this.messages)
     }
   },
 
