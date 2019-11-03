@@ -61,6 +61,18 @@ export default {
   watch: {
     messages () {
       setItem('chat-messages', this.messages)
+
+      // 让列表滚动到最底部
+      const messageList = this.$refs[`message-list`]
+      console.log('scrollTop: ', messageList.scrollTop)
+      console.log('scrollHeight', messageList.scrollHeight)
+
+      // 这里需要吧操作 DOM 的这个代码放到 $nextTick 中
+      // 视图更新不是立即执行的
+      //  如果立即操纵 DOM 那么必须写到 $nextTick 中，Vue提供的方法
+      this.$nextTick(() => {
+        messageList.scrollTop = messageList.scrollHeight
+      })
     }
   },
 
