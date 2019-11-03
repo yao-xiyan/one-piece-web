@@ -31,6 +31,11 @@ const router = new VueRouter({
       component: () => import('@/views/article')
     },
     {
+      name: 'chat',
+      path: '/chat', // 路飞聊天路由
+      component: () => import('@/views/chat')
+    },
+    {
       path: '/tabbar',
       component: () => import('@/views/tabbar'),
       children: [
