@@ -11,17 +11,17 @@
     <div class="message-list"
          ref="message-list">
       <div class="message-item"
-           :class="{ reverse: item % 3 === 0 }"
-           v-for="item in 20"
-           :key="item">
+           :class="{ reverse: item.isMe }"
+           v-for="(item, index) in messages"
+           :key="index">
         <van-image class="avatar"
                    slot="icon"
                    round
                    width="30"
                    height="30"
-                   src="https://img.yzcdn.cn/vant/cat.jpeg" />
+                   :src="item.photo" />
         <div class="title">
-          <span>{{ `hello${item}` }}</span>
+          <span>{{ item.message }}</span>
         </div>
       </div>
     </div>
@@ -46,10 +46,13 @@
 import io from 'socket.io-client'
 
 export default {
+  name: 'chatIndex',
   data () {
     return {
       message: '',
-      socket: null
+      socket: null,
+      // [{ message: '消息数据', isMe: true, photo: '头像' }]
+      messages: []
     }
   },
 
@@ -68,6 +71,11 @@ export default {
     // 监听接收服务端消息
     socket.on('message', data => {
       console.log('收到服务器消息', data)
+      this.messages.push({
+        message: data.msg,
+        isMe: false,
+        photo: 'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=119600296,925289645&fm=26&gp=0.jpg'
+      })
     })
   },
 
@@ -84,6 +92,16 @@ export default {
         msg: message,
         timestamp: Date.now()
       })
+
+      // 吧消息存储到数据组中
+      this.messages.push({
+        message,
+        isMe: true,
+        photo: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=1422385225,3371387042&fm=26&gp=0.jpg'
+      })
+
+      // 清空文本框
+      this.message = ''
     }
   }
 }
