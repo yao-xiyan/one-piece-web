@@ -16,7 +16,9 @@ export default new Vuex.Store({
     // 传入两个形参
     setUser (state, user) {
       state.user = user
-      setItem('user', state.user)
+
+      // 吧数据备份到本地存储防止页面刷新丢失
+      setItem('user', user)
       console.log(getItem)
     }
   },

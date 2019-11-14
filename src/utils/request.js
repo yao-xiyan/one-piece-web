@@ -3,6 +3,11 @@ import jsonBig from 'json-bigint'
 
 // 这里获取到的 store 和组件中的 this.$store 是一个东西
 import store from '@/store'
+
+// 非组件模块使用路由就直接加载即可
+// 如果加载目录下的 index.js ,则可以省略文件名
+import router from '@/router'
+
 // axios.create 方法
 // 建议使用create方式，我们可以拥有
 // 复制了一个axios， 拥有和axios完全一样的功能，但是配置可以不一样
@@ -43,6 +48,51 @@ request.interceptors.request.use(function (config) {
 /**
  * 响应拦截器
  */
+// Add a response interceptor
+axios.interceptors.response.use(function (response) {
+  // 小于400的状态码进入到这里
+  return response
+}, async function (error) {
+  // >=400 的状态码会进入这里响应失败
+  // 如果状态码是401
+  console.dir(error)
+  if (error.response && error.response.status === 401) {
+    const { user } = store.state
+    if (!user) {
+      // 如果用户都没有直接跳到登录页
+      router.push('/login')
+    } else {
+      try {
+        // 请求获取新的 token
+        const { data } = await axios({
+          method: 'PUT',
+          url: '/app/v1_0/authorizations',
+          headers: {
+            Authorization: `Bearer ${user.refresh_token}`
+          }
+        })
+        console.log(data)
+
+        // 将最新的 token 替换原有 token
+        store.commit('setUser', {
+          token: data.data.token, // 最新获取的
+          refresh_token: user.refresh_token // 还是原来的 refresh_token
+        }) // 容器
+        // 本地存储
+
+        // 将原来失败的请求继续发出去
+        // 将原来的请求参数直接拿来用
+        return request(error.config)
+      } catch (err) {
+        console.log(err)
+        // 刷新 token 也失败了，直接跳转到登录页
+        router.push('/login')
+      }
+    }
+  }
+  // 如果有 refresh_token ，则请求刷新 token
+  return Promise.reject(error)
+})
 
 // 导出这个请求对象，哪里需要发送请求，哪里就加载使用
 export default request

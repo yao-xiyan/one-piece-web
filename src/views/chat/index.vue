@@ -98,6 +98,11 @@ export default {
       })
     })
   },
+  mounted () {
+    // 列表滚动到最底部
+    const messageList = this.$refs[`message-list`]
+    messageList.scrollTop = messageList.scrollHeight
+  },
 
   methods: {
     onSendMessage () {
