@@ -49,7 +49,7 @@ request.interceptors.request.use(function (config) {
  * 响应拦截器
  */
 // Add a response interceptor
-axios.interceptors.response.use(function (response) {
+request.interceptors.response.use(function (response) {
   // 小于400的状态码进入到这里
   return response
 }, async function (error) {
@@ -60,7 +60,16 @@ axios.interceptors.response.use(function (response) {
     const { user } = store.state
     if (!user) {
       // 如果用户都没有直接跳到登录页
-      router.push('/login')
+      // router.push('/login')
+
+      router.push('/login?redirect=' + router.currentRoute.fullPath)
+
+      // router.push({
+      //   name: 'login',
+      //   query: {
+      //     redirect: router.currentRoute.fullPath
+      //   }
+      // })
     } else {
       try {
         // 请求获取新的 token
@@ -86,7 +95,12 @@ axios.interceptors.response.use(function (response) {
       } catch (err) {
         console.log(err)
         // 刷新 token 也失败了，直接跳转到登录页
-        router.push('/login')
+        router.push({
+          name: 'login',
+          query: {
+            redirect: router.currentRoute.fullPath
+          }
+        })
       }
     }
   }
