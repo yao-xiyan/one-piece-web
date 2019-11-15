@@ -2,7 +2,9 @@
   <!-- tabbar 标签栏 -->
   <div class="tabbar">
     <!-- 子路由出口 -->
-    <router-view />
+    <keep-alive>
+      <router-view />
+    </keep-alive>
 
     <!-- 底部导航 -->
     <van-tabbar route>
