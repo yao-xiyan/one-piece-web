@@ -11,6 +11,7 @@ import zhCN from 'vee-validate/dist/locale/zh_CN' // 加载验证插件的语言
 import * as rules from 'vee-validate/dist/rules' // 中文包\
 // 导入 fastClick 包
 // npm i fastclick
+import 'amfe-flexible/index.js'
 
 import fastClick from 'fastclick'
 // 固定用法

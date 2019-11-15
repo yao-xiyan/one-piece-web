@@ -127,3 +127,11 @@ export default router
 
 Git 只能管理文件，对于空目录不会进行版本管理，所以建议在空目录中添加一个 `.gitkeep` 空文件以保持提交历史中的目录结构。
 
+### 安装依赖
+
+移动端Rem适配
+
+- npm i amfe-flexible
+- npm install postcss-pxtorem --save-dev  vant组件中的
+- 只能转换单独的 .css|.less|.sass之类的文件、vue中的style中的 px 
+- 不能转换行内样式中的 px
