@@ -8,7 +8,14 @@ import './styles/index.less'
 // 表单验证
 import { ValidationProvider, ValidationObserver, extend } from 'vee-validate' // 核心组件
 import zhCN from 'vee-validate/dist/locale/zh_CN' // 加载验证插件的语言包
-import * as rules from 'vee-validate/dist/rules' // 中文包
+import * as rules from 'vee-validate/dist/rules' // 中文包\
+// 导入 fastClick 包
+// npm i fastclick
+
+import fastClick from 'fastclick'
+// 固定用法
+// 解决移动端点击300秒延迟
+fastClick.attach(document.body)
 
 // 配置使用中文语言
 for (let rule in rules) {
